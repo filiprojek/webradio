@@ -1,0 +1,8 @@
+---
+- name: update all servers (alpine)
+  hosts: server
+  tasks:
+    - name: update packages
+      become: true
+      xbps:
+        upgrade: yes

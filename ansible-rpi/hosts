@@ -1,0 +1,8 @@
+[server]
+10.68.1.108
+
+#[server:vars]
+#ansible_user=fr
+# ansible_ssh_private_key_file=
+#ansible_become_method=doas
+

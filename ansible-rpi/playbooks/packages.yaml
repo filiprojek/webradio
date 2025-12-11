@@ -1,0 +1,16 @@
+---
+- name: Add basic packages
+  hosts: all
+  tasks:
+    - name: ensure essential packages installed
+      xbps:
+        name: bash,vim,htop,opendoas,net-tools,git,vsv
+        state: latest
+
+- name: Install icecast
+  hosts: server
+  tasks:
+    - name: ensure essential packages installed
+      xbps:
+        name: icecast
+        state: latest

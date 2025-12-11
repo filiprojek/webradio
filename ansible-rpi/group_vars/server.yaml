@@ -1,0 +1,4 @@
+---
+ansible_become_method: false
+ansible_user: root
+ansible_ssh_pass: "voidlinux" # default void linux password

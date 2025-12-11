@@ -1,0 +1,63 @@
+---
+- name: Install Icecast
+  xbps:
+    name: "{{ icecast_package_name }}"
+    state: present
+
+- name: Deploy Icecast config
+  ansible.builtin.template:
+    src: icecast.xml.j2
+    dest: "{{ icecast_config_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart Icecast
+
+- name: Ensure Icecast runit service directory exists
+  ansible.builtin.file:
+    path: "/etc/sv/{{ icecast_service_name }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Install Icecast run script for runit
+  ansible.builtin.copy:
+    dest: "/etc/sv/{{ icecast_service_name }}/run"
+    owner: root
+    group: root
+    mode: "0755"
+    content: |
+      #!/bin/sh
+      exec /usr/bin/icecast -c {{ icecast_config_path }} 2>&1
+  notify: Restart Icecast
+
+- name: Ensure Icecast log directory exists
+  ansible.builtin.file:
+    path: "/etc/sv/{{ icecast_service_name }}/log"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Install Icecast log run script
+  ansible.builtin.copy:
+    dest: "/etc/sv/{{ icecast_service_name }}/log/run"
+    owner: root
+    group: root
+    mode: "0755"
+    content: |
+      #!/bin/sh
+      exec svlogd -tt /var/log/{{ icecast_service_name }}
+
+- name: Enable Icecast runit service
+  ansible.builtin.file:
+    src: "/etc/sv/{{ icecast_service_name }}"
+    dest: "/var/service/{{ icecast_service_name }}"
+    state: link
+
+- name: Ensure Icecast service is enabled and running
+  runit:
+    name: "{{ icecast_service_name }}"
+    enabled: true
+    state: started

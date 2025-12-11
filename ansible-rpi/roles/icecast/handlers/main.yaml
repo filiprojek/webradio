@@ -1,0 +1,5 @@
+---
+- name: Restart Icecast
+  runit:
+    name: "{{ icecast_service_name }}"
+    state: restarted

@@ -1,0 +1,5 @@
+- name: Configure Icecast server
+  hosts: server
+
+  roles:
+    - icecast

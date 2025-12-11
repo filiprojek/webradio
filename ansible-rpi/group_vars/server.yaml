@@ -2,3 +2,9 @@
 ansible_become_method: false
 ansible_user: root
 ansible_ssh_pass: "voidlinux" # default void linux password
+
+icecast_hostname: "rpi-icecast" # or IP / FQDN for status page
+icecast_source_password: "supersecret_source"
+icecast_relay_password: "supersecret_relay"
+icecast_admin_user: "admin"
+icecast_admin_password: "admin"

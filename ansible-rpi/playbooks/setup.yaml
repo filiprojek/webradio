@@ -1,1 +1,7 @@
-
+---
+- name: Setting up the server
+  hosts: server
+  tasks:
+    - name: Setup hostname
+      hostname:
+        name: "rpi-icecast"

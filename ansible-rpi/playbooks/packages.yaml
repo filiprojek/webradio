@@ -4,15 +4,15 @@
   tasks:
     - name: ensure essential packages installed
       xbps:
-        name: bash,vim,htop,opendoas,net-tools,git,vsv
+        name: bash,vim,htop,opendoas,net-tools,git,vsv,curl
         state: latest
 
-- name: Install icecast and docker
+- name: Install docker
   hosts: server
   tasks:
     - name: ensure additional packages installed
       xbps:
-        name: icecast,docker,docker-cli,docker-compose
+        name: docker,docker-cli,docker-compose
         state: latest
 
 - name: Setup docker

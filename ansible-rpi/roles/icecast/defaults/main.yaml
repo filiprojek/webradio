@@ -1,0 +1,9 @@
+icecast_package_name: icecast
+icecast_service_name: icecast
+icecast_config_path: /etc/icecast.xml
+
+icecast_hostname: "{{ inventory_hostname }}"
+icecast_source_password: "changeme_source"
+icecast_relay_password: "changeme_relay"
+icecast_admin_user: "admin"
+icecast_admin_password: "changeme_admin"

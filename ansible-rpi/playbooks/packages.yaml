@@ -7,10 +7,19 @@
         name: bash,vim,htop,opendoas,net-tools,git,vsv
         state: latest
 
-- name: Install icecast
+- name: Install icecast and docker
   hosts: server
   tasks:
-    - name: ensure essential packages installed
+    - name: ensure additional packages installed
       xbps:
-        name: icecast
+        name: icecast,docker,docker-cli,docker-compose
         state: latest
+
+- name: Setup docker
+  hosts: server
+  tasks:
+    - name: run docker daemon on boot
+      runit:
+        name: docker
+        enabled: true
+        state: started

@@ -4,7 +4,7 @@
   tasks:
     - name: ensure essential packages installed
       xbps:
-        name: bash,vim,htop,opendoas,net-tools,git,vsv,curl
+        name: bash,vim,htop,opendoas,net-tools,git,vsv,curl,ffmpeg
         state: latest
 
 - name: Install docker

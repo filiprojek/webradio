@@ -3,3 +3,49 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+:root {
+  /* Backgrounds (blue-gray) */
+  --bg-primary: #0d1117; /* page background */
+  --bg-secondary: #161b22; /* panels */
+  --bg-elevated: #21262d; /* cards / modals */
+
+  /* Text */
+  --text-primary: #e6edf3;
+  --text-secondary: #b1bac4;
+  --text-muted: #7d8590;
+
+  /* Borders */
+  --border-default: #30363d;
+
+  /* Accents (GitHub blue) */
+  --accent-primary: #2f81f7;
+  --accent-primary-hover: #1f6feb;
+
+  /* States */
+  --success: #3fb950;
+  --warning: #d29922;
+  --error: #f85149;
+
+  /* Interaction */
+  --focus-ring: rgba(47, 129, 247, 0.4);
+}
+
+body {
+  background-color: var(--bg-primary);
+  font-family: 'Open Sans', sans-serif;
+}
+
+p,
+b,
+i,
+a,
+h1,
+h2,
+h3 {
+  color: var(--text-primary);
+}
+
+button {
+  cursor: pointer;
+}

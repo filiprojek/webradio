@@ -1,0 +1,60 @@
+---
+- name: Deploy Webradio
+  hosts: server
+  #  become: true
+
+  vars:
+    repo_url: https://github.com/filiprojek/webradio
+    repo_dest: /root/webradio
+
+  tasks:
+    - name: Clone webradio repository
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ repo_dest }}"
+        version: master
+        update: yes
+
+    - name: Install server npm dependencies
+      ansible.builtin.command: npm install
+      args:
+        chdir: "{{ repo_dest }}/server"
+
+    - name: Install client npm dependencies
+      ansible.builtin.command: npm install
+      args:
+        chdir: "{{ repo_dest }}/client"
+
+    - name: Create start-webradio.sh
+      ansible.builtin.copy:
+        dest: /root/start-webradio.sh
+        mode: "0755"
+        content: |
+          #!/usr/bin/env bash
+
+          SESSION="webradio"
+
+          # If tmux is not running, start a new session
+          if ! tmux has-session -t "$SESSION" 2>/dev/null; then
+            tmux new-session -d -s "$SESSION" -n client
+
+            # Client tab
+            tmux send-keys -t "$SESSION:client" \
+              "cd /root/webradio/client && npx vite --host" C-m
+
+            # Server tab
+            tmux new-window -t "$SESSION" -n server
+            tmux send-keys -t "$SESSION:server" \
+              "cd /root/webradio/server && node server.js" C-m
+          fi
+
+          # Attach
+          tmux attach -t "$SESSION"
+
+    - name: Create kill-webradio.sh
+      ansible.builtin.copy:
+        dest: /root/kill-webradio.sh
+        mode: "0755"
+        content: |
+          #!/usr/bin/env bash
+          tmux kill-session -t webradio

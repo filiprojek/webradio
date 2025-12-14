@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import BoxItem from '../components/BoxItem.vue'
 
+const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3000'
+
 type Status = {
   playing: boolean
   playlist: string | null
@@ -12,7 +14,7 @@ const status = ref<Status>({ playing: false, playlist: null })
 const loading = ref(false)
 
 async function api<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
+  const res = await fetch(API_BASE + url, {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   })

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 
-const DEFAULT_STREAM_URL = "http://localhost:8000/radio";
+const DEFAULT_STREAM_URL =
+  import.meta.env.VITE_STREAM_URL ?? "http://localhost:8000/radio";
 const STORAGE_URL = "radio-stream-url";
 const STORAGE_VOL = "radio-volume";
 const STORAGE_MUTED = "radio-muted";

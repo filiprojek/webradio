@@ -7,7 +7,7 @@ import { RouterLink, RouterView } from 'vue-router'
     <nav>
       <div class="nav-flx nav-left">
         <RouterLink to="/">Webradio</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/client">Client</RouterLink>
       </div>
 
       <div class="nav-flx nav-center"></div>

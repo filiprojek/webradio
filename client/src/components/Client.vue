@@ -1,80 +1,117 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 
-const DEFAULT_STREAM_URL = 'http://localhost:8000/radio'
-const STORAGE_KEY = 'radio-stream-url'
+const DEFAULT_STREAM_URL = "http://localhost:8000/radio";
+const STORAGE_URL = "radio-stream-url";
+const STORAGE_VOL = "radio-volume";
+const STORAGE_MUTED = "radio-muted";
 
-const audio = ref<HTMLAudioElement | null>(null)
-const streamUrl = ref(DEFAULT_STREAM_URL)
-const playing = ref(false)
-const status = ref<'idle' | 'playing' | 'reconnecting'>('idle')
+const audio = ref<HTMLAudioElement | null>(null);
+const streamUrl = ref(DEFAULT_STREAM_URL);
 
-let retryTimer: number | null = null
+const status = ref<"idle" | "playing" | "reconnecting">("idle");
+const playing = ref(false);
 
-onMounted(() => {
-  const saved = localStorage.getItem(STORAGE_KEY)
-  if (saved) streamUrl.value = saved
+const volumePct = ref(80); // 0..100
+const muted = ref(false);
 
-  if (!audio.value) return
-  audio.value.preload = 'none'
+let retryTimer: number | null = null;
 
-  audio.value.addEventListener('ended', () => reloadStream(1000))
-  audio.value.addEventListener('error', () => reloadStream(1500))
-})
-
-onBeforeUnmount(() => stop())
-
-function saveUrl() {
-  localStorage.setItem(STORAGE_KEY, streamUrl.value)
-}
+const volumeLabel = computed(() => (muted.value ? "Muted" : `${volumePct.value}%`));
 
 function clearRetry() {
   if (retryTimer !== null) {
-    clearTimeout(retryTimer)
-    retryTimer = null
+    clearTimeout(retryTimer);
+    retryTimer = null;
   }
 }
 
+function applyAudioSettings() {
+  if (!audio.value) return;
+  audio.value.volume = Math.min(1, Math.max(0, volumePct.value / 100));
+  audio.value.muted = muted.value;
+}
+
+function saveUrl() {
+  localStorage.setItem(STORAGE_URL, streamUrl.value);
+}
+
+function saveAudioSettings() {
+  localStorage.setItem(STORAGE_VOL, String(volumePct.value));
+  localStorage.setItem(STORAGE_MUTED, muted.value ? "1" : "0");
+}
+
 function reloadStream(delay = 0) {
-  clearRetry()
+  clearRetry();
 
   retryTimer = window.setTimeout(() => {
-    if (!audio.value) return
+    if (!audio.value) return;
 
-    status.value = 'reconnecting'
-    playing.value = false
+    status.value = "reconnecting";
+    playing.value = false;
 
-    audio.value.pause()
-    audio.value.src = `${streamUrl.value}?t=${Date.now()}`
-    audio.value.load()
+    audio.value.pause();
+    audio.value.src = `${streamUrl.value}?t=${Date.now()}`;
+    audio.value.load();
+
+    applyAudioSettings();
 
     audio.value
       .play()
       .then(() => {
-        status.value = 'playing'
-        playing.value = true
+        status.value = "playing";
+        playing.value = true;
       })
       .catch(() => {
-        reloadStream(1000)
-      })
-  }, delay)
+        // autoplay might fail; retry
+        reloadStream(1000);
+      });
+  }, delay);
 }
 
 function play() {
-  reloadStream(0)
+  reloadStream(0);
 }
 
 function stop() {
-  clearRetry()
-  if (!audio.value) return
+  clearRetry();
+  if (!audio.value) return;
 
-  audio.value.pause()
-  audio.value.src = ''
-  playing.value = false
-  status.value = 'idle'
+  audio.value.pause();
+  audio.value.src = "";
+  playing.value = false;
+  status.value = "idle";
 }
-</script>
 
+function toggleMute() {
+  muted.value = !muted.value;
+}
+
+onMounted(() => {
+  const savedUrl = localStorage.getItem(STORAGE_URL);
+  if (savedUrl) streamUrl.value = savedUrl;
+
+  const savedVol = Number(localStorage.getItem(STORAGE_VOL));
+  if (!Number.isNaN(savedVol)) volumePct.value = Math.min(100, Math.max(0, savedVol));
+
+  muted.value = localStorage.getItem(STORAGE_MUTED) === "1";
+
+  if (!audio.value) return;
+  audio.value.preload = "none";
+
+  applyAudioSettings();
+
+  audio.value.addEventListener("ended", () => reloadStream(1000));
+  audio.value.addEventListener("error", () => reloadStream(1500));
+});
+
+onBeforeUnmount(() => stop());
+
+watch([volumePct, muted], () => {
+  applyAudioSettings();
+  saveAudioSettings();
+});
+</script>
 <template>
   <section class="radio-player">
     <h2>Live Radio</h2>
@@ -88,6 +125,23 @@ function stop() {
         <button class="save" @click="saveUrl">Save URL</button>
       </div>
     </label>
+
+    <div class="volume-row">
+      <button class="mute" @click="toggleMute">
+        {{ muted ? "🔇" : "🔊" }}
+      </button>
+
+      <input
+        class="volume"
+        type="range"
+        min="0"
+        max="100"
+        step="1"
+        v-model="volumePct"
+      />
+
+      <span class="vol-label">{{ volumeLabel }}</span>
+    </div>
 
     <div class="controls">
       <button @click="play" :disabled="status === 'playing'">▶ Play</button>
@@ -214,5 +268,28 @@ button:first-child:hover {
 }
 .off {
   color: #f85149;
+}
+
+.volume-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.volume {
+  flex: 1;
+}
+
+.vol-label {
+  width: 64px;
+  text-align: right;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.mute {
+  padding: 0.35rem 0.6rem;
+  min-width: 44px;
 }
 </style>

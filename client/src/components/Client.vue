@@ -117,7 +117,7 @@ watch([volumePct, muted], () => {
   <section class="radio-player">
     <h2>Live Radio</h2>
 
-    <audio ref="audio" />
+    <audio ref="audio" crossorigin="anonymous" />
 
     <label class="url-input">
       <p>Stream URL</p>

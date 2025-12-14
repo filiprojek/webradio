@@ -1,7 +1,7 @@
 <template>
   <div class="box-item">
     <h2>{{ header }}</h2>
-    <p>{{ paragraph }}</p>
+    <p v-if="paragraph">{{ paragraph }}</p>
   </div>
 </template>
 

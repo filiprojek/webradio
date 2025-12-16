@@ -1,4 +1,5 @@
-# Webradio – návrh a realizace multimediálního systému
+# Webradio
+## Návrh a realizace multimediálního systému
 
 ## 1. Úvod a význam systému
 
@@ -173,10 +174,8 @@ Celkové softwarové náklady: **0 Kč**.
 ### 5.1 Spuštění systému
 
 Projekt je verzován pomocí Git a je dostupný na:
+[https://github.com/filiprojek/webradio]()
 
-```
-https://github.com/filiprojek/webradio
-```
 
 Automatizované nasazení je možné pomocí Ansible playbooku, který:
 
@@ -194,6 +193,18 @@ Obrazová dokumentace zahrnuje:
 * screenshot webového klienta,
 * běžící tmux session (server + klient),
 * ukázku přehrávání streamu.
+
+#### Server – Node.js API
+![Node.js server](.screenshots/server-nodejs.png)
+
+#### Server – Vue.js klient (vývojové prostředí)
+![Vue.js server](.screenshots/server-vuejs.png)
+
+#### Webový klient – přehrávač
+![Webový klient – přehrávač](.screenshots/webui-client.png)
+
+#### Webové rozhraní – Dashboard
+![Webové rozhraní – dashboard](.screenshots/webui-dashboard.png)
 
 ---
 
